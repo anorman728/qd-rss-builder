@@ -22,14 +22,6 @@ def getline():
         return ''
     return returnval.strip()
 
-def gotonewentry():
-    linedum = ''
-    while linedum != '!newentry':
-        if eof:
-            return
-        linedum = getline()
-        # Continue until get to new entry.
-    
 
 if (getline() != '!meta'):
     raise Exception('Missing metadata')
