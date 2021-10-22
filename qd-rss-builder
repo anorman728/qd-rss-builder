@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+
+import sys
+
+# This is SUPER SIMPLE.  Just goes straight down the line.
+# Does almost no error checking or data validation, so errors will be largely unpredictable.
+
+print('''<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+    xmlns:content="http://purl.org/rss/1.0/modules/content/"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+>
+<channel>''')
+
+eof = False
+
+def getline():
+    global eof
+    returnval = sys.stdin.readline()
+    if not returnval:
+        eof = True
+        return ''
+    return returnval.strip()
+
+def gotonewentry():
+    linedum = ''
+    while linedum != '!newentry':
+        if eof:
+            return
+        linedum = getline()
+        # Continue until get to new entry.
+    
+
+if (getline() != '!meta'):
+    raise Exception('Missing metadata')
+
+print('<title>' + getline() + '</title>')
+print('<link>' + getline() + '</link>')
+feedurl = getline()
+print('<description>' + getline() + '</description>')
+print('<atom:link href="' + feedurl + '" rel="self" type="application/rss+xml" />')
+
+# Move to first entry.
+linedum = ''
+while linedum != '!newentry':
+    linedum = getline()
+
+while not eof:
+    titledum = getline()
+    descdum = getline()
+    datedum = getline()
+    urldum = getline()
+
+    contentdum = ''
+    newline = ''
+    while newline != '!newentry' and not eof:
+        contentdum += newline + "\n"
+        newline = getline()
+
+    print('<item>')
+
+    print('<title>' + titledum + '</title>')
+    print('<link>' + urldum + '</link>')
+    print('<guid>' + urldum + '</guid>')
+    print('<pubDate>' + datedum + '</pubDate>')
+    print('<description>' + descdum + '</description>')
+    print('<content:encoded><![CDATA[' + contentdum + ']]></content:encoded>')
+
+    print('</item>')
+
+print('</channel>')
+print('</rss>')
